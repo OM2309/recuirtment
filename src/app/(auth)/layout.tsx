@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/toggle-mode";
 import { ReactNode } from "react";
 
 interface LayoutProps {
@@ -7,7 +8,10 @@ interface LayoutProps {
 export default function AuthLayout({ children }: LayoutProps) {
   return (
     <>
-      <main>{children}</main>
+      <main>
+        <ThemeToggle />
+        {children}
+      </main>
     </>
   );
 }

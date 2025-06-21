@@ -133,13 +133,19 @@ export function OtpForm({ className, ...props }: React.ComponentProps<"div">) {
 
       <div className="text-muted-foreground text-center text-xs text-balance">
         By continuing, you agree to our{" "}
-        <a href="#" className="underline underline-offset-4 hover:text-primary">
+        <Link
+          href="#"
+          className="underline underline-offset-4 hover:text-primary"
+        >
           Terms of Service
-        </a>{" "}
+        </Link>{" "}
         and{" "}
-        <a href="#" className="underline underline-offset-4 hover:text-primary">
+        <Link
+          href="#"
+          className="underline underline-offset-4 hover:text-primary"
+        >
           Privacy Policy
-        </a>
+        </Link>
         .
       </div>
     </div>
