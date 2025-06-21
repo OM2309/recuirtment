@@ -11,9 +11,11 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, LoginFormData } from "@/lib/validation/auth";
-import { userExists } from "@/actions/action";
+import { userExists } from "@/actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import useOtpStore from "@/store/useOtpStore";
+import useEmailStore from "@/store/useEmailStore";
 
 type Provider = "google" | "linkedin";
 
@@ -53,8 +55,11 @@ export function LoginForm({
     }
   };
 
+  const setOtp = useOtpStore((state) => state.setOtp);
+  const setEmail = useEmailStore((state) => state.setEmail);
   const onSubmit = async (data: LoginFormData) => {
     setIsEmailChecking(true);
+    setEmail(data.email); // Store email in the email store
     try {
       const result = await userExists(data.email);
       console.log("Email check result:", result);
@@ -63,6 +68,13 @@ export function LoginForm({
         toast.error("Email does not exist");
         return;
       }
+
+      setOtp({
+        id: result?.data?.id || 0,
+        userId: result?.data?.userId || 0,
+        otp: result?.data?.otp || "",
+      });
+
       toast.success("OTP sent to your email");
       router.push("/verify-otp");
     } catch (error) {

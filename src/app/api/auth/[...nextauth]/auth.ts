@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import LinkedInProvider from "next-auth/providers/linkedin";
 import prisma from "@/lib/prisma";
 import type { NextAuthConfig } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -13,6 +14,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     LinkedInProvider({
       clientId: process.env.AUTH_LINKEDIN_ID!,
       clientSecret: process.env.AUTH_LINKEDIN_SECRET!,
+    }),
+    CredentialsProvider({
+      name: "OTP Login",
+      credentials: {
+        email: { label: "Email", type: "text" },
+      },
+      async authorize(credentials) {
+        console.log("Credentials:", credentials);
+        const email = credentials?.email as string;
+        if (!credentials?.email) return null;
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (!user) return null;
+
+        return {
+          id: user.id.toString(),
+          name: user.name,
+          email: user.email,
+          image: user.profilePic,
+        };
+      },
     }),
   ],
   session: {
@@ -49,8 +73,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return false;
       }
     },
-    async jwt({ token, user, account }) {
-      console.log("JWT Callback:", { token, user, account });
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;

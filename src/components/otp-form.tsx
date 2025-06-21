@@ -10,17 +10,21 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Label } from "@/components/ui/label";
+
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import { otpSchema, OtpFormData } from "@/lib/validation/otp";
+import useOtpStore from "@/store/useOtpStore";
+import { verifyOtp } from "@/actions";
+import { signIn } from "next-auth/react";
+import useEmailStore from "@/store/useEmailStore";
 
 export function OtpForm({ className, ...props }: React.ComponentProps<"div">) {
   const [isLoading, setIsLoading] = useState(false);
+  const getOtp = useOtpStore((state) => state.otpData);
+  const getEmail = useEmailStore((state) => state.email);
 
   const {
     register,
@@ -33,9 +37,17 @@ export function OtpForm({ className, ...props }: React.ComponentProps<"div">) {
   });
 
   const onSubmit = async (data: OtpFormData) => {
+    console.log("OTP Form Data:", data);
     setIsLoading(true);
+
+    if (!getOtp?.userId || !getOtp?.id) {
+      toast.error("OTP session has expired. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const result = { success: true };
+      const result = await verifyOtp(getOtp.userId, data.otp, getOtp.id);
 
       if (!result.success) {
         toast.error("Invalid OTP");
@@ -43,7 +55,8 @@ export function OtpForm({ className, ...props }: React.ComponentProps<"div">) {
       }
 
       await signIn("credentials", {
-        email: "user@example.com",
+        email: getEmail,
+        redirect: true,
         callbackUrl: "/",
       });
 
@@ -81,7 +94,6 @@ export function OtpForm({ className, ...props }: React.ComponentProps<"div">) {
 
           <div className="flex flex-col gap-6 items-center">
             <div className="grid gap-3">
-              <Label htmlFor="otp">One-Time Password</Label>
               <InputOTP
                 maxLength={6}
                 onChange={(value) => setValue("otp", value)}
