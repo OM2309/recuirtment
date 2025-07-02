@@ -42,6 +42,7 @@ export function LoginForm({
     setIsLoading((prev) => ({ ...prev, [provider]: true }));
     try {
       await signIn(provider, { callbackUrl: "/" });
+
       toast.success(
         `Logged in with ${provider[0].toUpperCase() + provider.slice(1)}!`
       );
@@ -57,13 +58,13 @@ export function LoginForm({
 
   const setOtp = useOtpStore((state) => state.setOtp);
   const setEmail = useEmailStore((state) => state.setEmail);
+
   const onSubmit = async (data: LoginFormData) => {
     setIsEmailChecking(true);
-    setEmail(data.email); // Store email in the email store
+    setEmail(data.email);
     try {
       const result = await userExists(data.email);
-      console.log("Email check result:", result);
-
+      console.log("result", result);
       if (!result.success) {
         toast.error("Email does not exist");
         return;

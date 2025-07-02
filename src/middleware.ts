@@ -6,7 +6,10 @@ export async function middleware(req: NextRequest) {
 
   if (!token) {
     const loginUrl = new URL("/login", req.url);
-    return NextResponse.redirect(loginUrl);
+    // Check if the request is not already for auth routes
+    if (!req.nextUrl.pathname.startsWith("/auth")) {
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
   return NextResponse.next();

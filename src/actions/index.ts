@@ -4,9 +4,11 @@ import prisma from "@/lib/prisma";
 import { sendOtpEmail } from "@/lib/sendEmail";
 
 export async function userExists(email: string) {
+  const emailString = Array.isArray(email) ? email[0] : email;
+  console.log("Email", email);
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: emailString },
       select: {
         id: true,
         email: true,
@@ -14,7 +16,7 @@ export async function userExists(email: string) {
       },
     });
 
-    if (!user) {
+    if (user?.success === false) {
       return {
         success: false,
         data: null,
@@ -27,13 +29,11 @@ export async function userExists(email: string) {
     const otp = await prisma.otp.create({
       data: {
         otp: otpNumber,
-        userId: user.id,
+        userId: user?.id,
       },
     });
 
-    console.log("OTP created:", otp);
-
-    const emailSent = await sendOtpEmail(user.email, otpNumber);
+    const emailSent = await sendOtpEmail(user?.email, otpNumber);
 
     if (!emailSent) {
       return {

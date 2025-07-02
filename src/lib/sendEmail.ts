@@ -112,7 +112,6 @@ export async function sendOtpEmail(email: string, otp: string) {
       return false;
     }
 
-    console.log("Email sent successfully:", data);
     return true;
   } catch (err) {
     console.error("Send OTP failed:", err);

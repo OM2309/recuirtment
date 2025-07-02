@@ -11,19 +11,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientId: process.env.AUTH_GOOGLE_ID!,
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
     }),
+
     LinkedInProvider({
       clientId: process.env.AUTH_LINKEDIN_ID!,
       clientSecret: process.env.AUTH_LINKEDIN_SECRET!,
     }),
+
     CredentialsProvider({
       name: "OTP Login",
       credentials: {
         email: { label: "Email", type: "text" },
       },
       async authorize(credentials) {
-        console.log("Credentials:", credentials);
         const email = credentials?.email as string;
+
         if (!credentials?.email) return null;
+
         const user = await prisma.user.findUnique({
           where: { email },
         });
@@ -44,7 +47,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log("SignIn Callback:", { user, account, profile });
       try {
         if (!user.email) {
           return false;
@@ -73,17 +75,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return false;
       }
     },
+
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.image = user.image;
+        token.image = user?.image;
       }
+
       return token;
     },
+
     async session({ session, token }) {
-      console.log("Session Callback:", { session, token });
       if (token) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
@@ -92,6 +96,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
+
     async redirect({ url, baseUrl }) {
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       if (new URL(url).origin === baseUrl) return url;
