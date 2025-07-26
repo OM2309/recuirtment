@@ -107,6 +107,8 @@ export async function sendOtpEmail(email: string, otp: string) {
       `,
     });
 
+    console.log(data);
+
     if (error) {
       console.error("Resend error:", error);
       return false;

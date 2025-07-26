@@ -1,7 +1,11 @@
-import React from "react";
+import { fetchApplicationResumes } from "@/actions";
 
-const page = () => {
-  return <div>Hekkio</div>;
-};
-
-export default page;
+export default async function JobPosting() {
+  const resumes = await fetchApplicationResumes();
+  console.log("Resume", resumes);
+  return (
+    <div>
+      <div></div>
+    </div>
+  );
+}

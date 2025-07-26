@@ -86,6 +86,8 @@ export function LoginForm({
     }
   };
 
+  const message = "Don't have an account?";
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -102,7 +104,7 @@ export function LoginForm({
             </Link>
             <h1 className="text-xl font-bold">Welcome to Recruitment Inc.</h1>
             <div className="text-center text-sm">
-              Don`&apos`t have an account?
+              {message}
               <Link href="#" className="underline underline-offset-4 ml-2">
                 Sign up
               </Link>

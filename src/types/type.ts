@@ -3,3 +3,11 @@ export interface OtpData {
   userId: number;
   otp: string;
 }
+
+export interface GmailMessagePart {
+  filename?: string;
+  mimeType?: string;
+  body: {
+    attachmentId?: string;
+  };
+}
