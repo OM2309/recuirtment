@@ -147,8 +147,8 @@ const data = {
       icon: Home,
     },
     {
-      name: "Job Postings",
-      url: "/job-posting",
+      name: "Emails",
+      url: "/emails",
       icon: Briefcase,
     },
     {

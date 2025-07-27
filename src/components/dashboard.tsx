@@ -7,7 +7,7 @@ const Dashboard = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-start space-y-0 pb-2">
           <div className="rounded bg-[#272727] p-1.5 text-foreground-light shadow-sm">
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
+            <Briefcase className="h-4 w-4 text-white dark:text-muted-foreground " />
           </div>
           <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
         </CardHeader>
@@ -19,7 +19,7 @@ const Dashboard = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-start space-y-0 pb-2">
           <div className="rounded bg-[#272727] p-1.5 text-foreground-light shadow-sm">
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-white dark:text-muted-foreground" />
           </div>
           <CardTitle className="text-sm font-medium">
             Total Applicants
@@ -33,7 +33,7 @@ const Dashboard = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-start space-y-0 pb-2">
           <div className="rounded bg-[#272727] p-1.5 text-foreground-light shadow-sm">
-            <Zap className="h-4 w-4 text-muted-foreground" />
+            <Zap className="h-4 w-4 text-white dark:text-muted-foreground" />
           </div>
           <CardTitle className="text-sm font-medium">
             AI Screening Rate
@@ -47,7 +47,7 @@ const Dashboard = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-start space-y-0 pb-2">
           <div className="rounded bg-[#272727] p-1.5 text-foreground-light shadow-sm">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-white dark:text-muted-foreground" />
           </div>
           <CardTitle className="text-sm font-medium">
             Interviews Scheduled

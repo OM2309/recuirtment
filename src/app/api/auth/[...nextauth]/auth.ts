@@ -15,7 +15,7 @@ export const authOptions = {
           prompt: "consent",
           access_type: "offline",
           response_type: "code",
-          scope: "https://www.googleapis.com/auth/gmail.readonly",
+          scope: "openid email https://www.googleapis.com/auth/gmail.readonly",
         },
       },
     }),
@@ -56,7 +56,7 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
-        if (!user.email) {
+        if (!user.email && !profile?.email) {
           console.error("SignIn error: No email provided", {
             user,
             account,
@@ -65,12 +65,13 @@ export const authOptions = {
           return false;
         }
 
-        console.log("Attempting upsert for email:", user.email);
+        const email = user.email || profile?.email;
+        console.log("Attempting upsert for email:", email);
 
         const existingUser = await prisma.user.upsert({
-          where: { email: user.email },
+          where: { email },
           create: {
-            email: user.email,
+            email,
             name: user.name ?? profile?.name ?? "New User",
             profilePic: user.image ?? profile?.picture ?? null,
             provider: account?.provider ?? "unknown",
@@ -84,6 +85,7 @@ export const authOptions = {
 
         console.log("Upsert successful:", existingUser);
         user.id = existingUser.id.toString();
+        user.email = email; // Update user.email if it was missing
         return true;
       } catch (error) {
         console.error("Error in signIn callback:", error);
@@ -91,23 +93,24 @@ export const authOptions = {
       }
     },
 
-    async jwt({ token, account }) {
+    async jwt({ token, account, profile }) {
       if (account) {
-        token.accessToken = account.access_token; // Ensure access_token is stored
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
-        token.image = user.image;
+        token.accessToken = account.access_token;
+        token.id = token.id || profile?.sub;
+        token.email = token.email || profile?.email;
+        token.name = token.name || profile?.name;
+        token.image = token.image || profile?.picture;
       }
       return token;
     },
+
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.name = token.name as string;
         session.user.image = token.image as string;
-        session.accessToken = token.accessToken; // Add accessToken to session
+        session.accessToken = token.accessToken as string;
       }
       return session;
     },
